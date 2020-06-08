@@ -10,11 +10,13 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "echarts": "^4.8.0",
     "view-design": "^4.2.0",
     "vue": "^2.5.2",
     "vue-amap": "^0.5.10",
     "vue-router": "^3.0.1",
+    "vue-wordcloud": "^1.1.1",
     "vuex": "^3.4.0"
   },
   "devDependencies": {

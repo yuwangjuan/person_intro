@@ -33,7 +33,7 @@
             <div class="top-c">
                 <header>
                     <div class="h-left">
-                        <div class="pointer" @click="isShrinkAside" title="收缩/展开">
+                        <div class="pointer"  title="收缩/展开">
                             <Icon type="ios-apps" />
                         </div>
                         <!-- 面包屑功能 -->

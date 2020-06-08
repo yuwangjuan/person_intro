@@ -23,7 +23,7 @@ export default new Router({
       name: 'Index',
       component: Index
     },
-    { path: '/', redirect: '/home' },
+    { path: '/', redirect: '/login' },
     {
         path: '/home',
         name: 'home',

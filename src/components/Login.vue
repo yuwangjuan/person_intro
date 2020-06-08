@@ -3,11 +3,11 @@
         <div class="container">
             <p class="title">WELCOME</p>
             <div class="input-c">
-                <Input prefix="ios-contact" v-model="account" placeholder="用户名" clearable @on-blur="verifyAccount"/>
+                <Input prefix="ios-contact" v-model="account" required placeholder="用户名" clearable />
                 <p class="error">{{accountError}}</p>
             </div>
             <div class="input-c">
-                <Input type="password" v-model="pwd" prefix="md-lock" placeholder="密码" clearable @on-blur="verifyPwd"/>
+                <Input type="password" v-model="pwd" required prefix="md-lock" placeholder="密码" clearable />
                 <p class="error">{{pwdError}}</p>
             </div>
             <Button :loading="isShowLoading" class="submit" type="primary" @click="submit">登陆</Button>
@@ -41,45 +41,72 @@ export default {
         },
     },
     methods: {
-        verifyAccount() {
-          var uPattern = /^[a-zA-Z0-9_]{4,16}$/;
-            if ( uPattern.test(this.account)==false) {
-                this.accountError = '4-16位(字母,数字,下划线)'
-            } else {
-                this.accountError = ''
-            }
-        },
-        verifyPwd() {
-            if (this.pwd !== 'admin') {
-                this.pwdError = ''
-            } else {
-                this.pwdError = ''
-            }
-        },
+        // verifyAccount() {
+        //   var uPattern = /^[a-zA-Z0-9_]{4,16}$/;
+        //     if ( uPattern.test(this.account=='') {
+        //         this.accountError = '4-16位(字母,数字,下划线)'
+        //     } else {
+        //         this.accountError = ''
+        //     }
+        // },
+        // verifyPwd() {
+        //     if (this.pwd !== 'admin') {
+        //         this.pwdError = ''
+        //     } else {
+        //         this.pwdError = ''
+        //     }
+        // },
         register() {
             this.$router.push({ path: '/register' })
         },
         forgetPwd() {
 
         },
+        // 成功提示
+        success () {
+            this.$Message.success('登录成功');
+        },
+        error () {
+                this.$Message.error('登录失败');
+            },
         submit() {
-            if (this.account === 'admin' && this.pwd === 'admin') {
-                this.isShowLoading = true
-                // 登陆成功 设置用户信息
-                localStorage.setItem('userImg', 'https://avatars3.githubusercontent.com/u/22117876?s=460&v=4')
-                localStorage.setItem('userName', '小明')
-                // 登陆成功 假设这里是后台返回的 token
-                localStorage.setItem('token', 'i_am_token')
-                this.$router.push({ path: '/index' })
-            } else {
-                if (this.account !== 'admin') {
-                    this.accountError = '账号为admin'
-                }
-
-                if (this.pwd !== 'admin') {
-                    this.pwdError = '密码为admin'
-                }
+            if(this.account && this.pwd){
+                 this.$axios({
+                    url:'http://192.168.0.109:7070/user/userLogin',
+                    method:'post',
+                    data:{
+                       telphone:this.account,
+                       password:this.pwd 
+                    },
+                    dataType:'json',
+                }).then(res=>{
+                    console.log(res,'res')
+                    if(res.data.data=='登陆成功'){
+                        this.success();
+                        setTimeout(()=>{this.$router.push({path:'/index'})},1000)
+                    }else{
+                        this.error();
+                    }
+                })
             }
+            // if (this.account === 'admin' && this.pwd === 'admin') {
+            //     this.isShowLoading = true
+            //     // 登陆成功 设置用户信息
+            //     localStorage.setItem('userImg', 'https://avatars3.githubusercontent.com/u/22117876?s=460&v=4')
+            //     localStorage.setItem('userName', '小明')
+            //     // 登陆成功 假设这里是后台返回的 token
+            //     localStorage.setItem('token', 'i_am_token')
+            //     this.$router.push({ path: '/index' })
+            // } else {
+            //     if (this.account !== 'admin') {
+            //         this.accountError = '账号为admin'
+            //     }
+
+            //     if (this.pwd !== 'admin') {
+            //         this.pwdError = '密码为admin'
+            //     }
+            // }
+
         },
     },
 }

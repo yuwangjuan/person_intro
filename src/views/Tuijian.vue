@@ -2,8 +2,8 @@
     <div class="home-container">
         <div class="home-content">
             <div class="ipt">
-                <input type="text"  class="ipt-text" placeholder="智能搜索"/>
-                <Icon type="ios-search"  class="icon-search"/>
+                <input type="text" v-model='ipt' class="ipt-text" placeholder="智能搜索"/>
+                <Icon type="ios-search" @click="search()" class="icon-search"/>
             </div>
             <div class="main-content">
                 <div class="contain-left">
@@ -11,6 +11,7 @@
                     <Tabs type="card">
         <TabPane label="杭州">
             <div class="add-scroll">
+              <p style="color:#fff">工作总数：{{this.hzJobNum}}</p>
             <div class="card-box">
                <p class="title">大数据开发工程师</p>
                <p>base 杭州</p>
@@ -35,6 +36,7 @@
             </div>
         </TabPane>
         <TabPane label="北京">
+          <p style="color:#fff">工作总数：{{this.bjJobNum}}</p>
             <div class="card-box">
                <p class="title">java</p>
                <p>base 北京</p>
@@ -43,14 +45,29 @@
                <p>杭州达达有限公司</p>
             </div>
         </TabPane>
-        <TabPane label="广州">标签二的内容</TabPane>
-        <TabPane label="上海">标签三的内容</TabPane>
+        <TabPane label="广州">
+          <p style="color:#fff">工作总数：{{this.gzJobNum}}</p>
+        </TabPane>
+        <TabPane label="上海">
+          <p style="color:#fff">工作总数：{{this.shJobNum}}</p>
+        </TabPane>
     </Tabs>
                 </div>
                   <div class="contain-center">
-                    <p class="hot-refer">热门推荐</p>
+                    <p class="hot-refer">搜索结果</p>
+                    <!-- <Table height="700"  position="absolute" border :columns="columns2" tooltip=true :data="data3"></Table> -->
                    
-                 <div class="add-scroll">
+            <div class="add-scroll">
+              <div class="card-box" v-for="(item,index ) in data3 " :key="index">
+               <p class="data_title"><span style="color:#dcd712;font-size:18px;cursor:pointer" @click="goToUrl(item.url)">公司名：{{item.name}}</span></p>
+               <p class="data_title">工作地点：{{item.city_detail}}</p>
+               <p class="data_title">薪资：{{item.salary}}</p>
+               <p class="data_title">职位：{{item.position}}</p>
+               <p class="data_title">福利：{{item.welfare_tag}}</p>
+               <p class="data_title">招聘发布：{{item.summary_tag}}</p>
+               <p class="data_title">公司简介：{{item.info}}</p>
+               <p class="data_title">职位要求：{{item.position_desc}}</p>
+            </div>
                  </div>
                 </div>
                 <!-- right -->
@@ -80,7 +97,118 @@
 
 <script>
 export default {
-  name: "tuijian"
+  name: "tuijian",
+  data(){
+    return{
+      ipt:'',
+      hzJobNum:'',
+      bjJobNum:'',
+      gzJobNum:'',
+      szJobNum:'',
+      shJobNum:'',
+      columns2:[
+        {
+                        title: '公司',
+                        key:'name',
+                        fixed: 'left',
+                        width: 100,
+                        tooltip:'true'
+                    },
+                    {
+                        title: '规模',
+                        key: 'peoples',
+                        width: 100,
+                        tooltip:'true'
+                    },
+                    {
+                        title: '职位要求',
+                        key: 'position_desc',
+                        width: 100,
+                        tooltip:'true'
+                    },
+                    {
+                        title: '福利',
+                        key: 'welfare_tag',
+                        width: 100,
+                        tooltip:'true'
+                    },
+                    {
+                        title: '招聘信息',
+                        key: 'summary_tag',
+                        width: 100,
+                        tooltip:'true'
+                    },
+                    {
+                        title: '薪资',
+                        key: 'salary',
+                        width: 100,
+                        tooltip:'true'
+                    },
+                     {
+                        title: '公司性质',
+                        key: 'type',
+                        width: 100,
+                        tooltip:'true'
+                    }, {
+                        title: '职位',
+                        key: 'position',
+                        width: 100,
+                        tooltip:'true'
+                    }, {
+                        title: '地点',
+                        key: 'city_detail',
+                        width: 100,
+                        tooltip:'true'
+                    }, {
+                        title: '公司简介',
+                        key: 'info',
+                        width: 200,
+                        tooltip:'true'
+                    }
+      ],
+      data3:[]
+    }
+  },
+  methods:{
+    goToUrl(url){
+        window.location.href=url
+    },
+    // input search
+    search(){
+      console.log(this.ipt,'ipt');
+      this.getTabData(this.ipt)
+    },
+    getTabData(ipt){
+      console.log(ipt,'ipts')
+      this.$axios({
+        url:this.urlHost+'job/search?key='+123,
+        dataType:'json',
+        data:{
+        }
+      }).then(res=>{
+        console.log(res.data.data);
+        this.data3 = res.data.data; 
+      })
+    },
+    // 各城市工作数
+    getCityNum(){
+      this.$axios({
+        url:this.urlHost+'job/getJobNumMap',
+        dataType:'json',
+        data:{}
+      }).then(res=>{
+          this.hzJobNum = res.data.data[0].jobCount;
+          this.bjJobNum = res.data.data[1].jobCount;
+          this.gzJobNum = res.data.data[2].jobCount;
+          this.szJobNum = res.data.data[3].jobCount;
+          this.shJobNum = res.data.data[4].jobCount;
+      })
+    }
+  },
+  mounted(){
+    this.getTabData();
+    this.getCityNum();
+  }
 };
 </script>
 
@@ -131,21 +259,21 @@ export default {
   /* border:1px solid #afa; */
 }
 .contain-left {
-  width: 30%;
+  width: 24%;
   display:inline-block;
   /* height:500px; */
   /* border:1px solid red; */
 }
 .contain-center{
-    width:40%;
-    height: 600px;
+    width:51%;
+    height: 700px;
     vertical-align:top;
     /* border:1px solid red; */
     display:inline-block;
-    /* border:1px solid grey; */
+    position:relative
 }
 .contain-right{
-    width:29%;
+    width:24%;
     display:inline-block;
     /* border: 1px solid yellow; */
     vertical-align: top;
@@ -171,6 +299,29 @@ export default {
   padding: 15px;
   margin-top: 10px;
 }
+.data_title{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.add-scroll::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+  height: 1px;
+  }
+  .add-scroll::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 10px;
+  box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background   : #535353;
+  }
+  .add-scroll::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  background   : rgba(56, 76, 93, 0.2);
+  }
 </style>
 <style>
 input {
@@ -227,6 +378,34 @@ input {
   border-radius: 10px;
   background   : #ededed;
   } 
+   .ivu-table{
+    color:#fff;
+    background-color: rgba(56, 76, 93, 0.2) !important;
+    border-top:1px solid #1a4679 !important;
+  }
+  
+  .ivu-table td{
+    border-bottom:1px solid #1a4679 !important;
+    background-color:transparent !important;
+  }
+  .ivu-table th{
+    background-color:transparent !important;
+  }
+  .ivu-table td, .ivu-table th{
+     border-bottom:1px solid #1a4679 !important;
+  }
+  .ivu-table-border td, .ivu-table-border th{
+    border-right:1px solid #1a4679 !important;
+  } 
+  .ivu-table-wrapper-with-border{
+    border:transparent !important;
+  }
+  .ivu-table td, .ivu-table th{
+    /* border:transparent !important; */
+  }
+  .ivu-table-border:after{
+    width:0 !important;
+  }
 </style>
 
 
